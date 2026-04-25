@@ -1,4 +1,6 @@
 /** OMDb often returns "N/A"; some CDNs block hotlinking without a referrer policy on <img>. */
+import { API_ORIGIN } from '../config';
+
 const PLACEHOLDER =
   'data:image/svg+xml,' +
   encodeURIComponent(
@@ -13,7 +15,7 @@ export function normalizePosterUrl(url) {
   const t = url.trim();
   if (!t || /^n\/?a$/i.test(t)) return null;
   // Backend may return relative API paths (serve from Spring Boot)
-  if (t.startsWith('/api/')) return `http://localhost:8080${t}`;
+  if (t.startsWith('/api/')) return `${API_ORIGIN}${t}`;
   // Prefer HTTPS to avoid mixed-content blocking on HTTPS deployments
   return t.startsWith('http://') ? `https://${t.slice(7)}` : t;
 }

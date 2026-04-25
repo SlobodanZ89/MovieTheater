@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { getStoredAuth } from '../auth/AuthContext';
+import { API_BASE_URL } from '../config';
 
 export const http = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: API_BASE_URL,
 });
 
 http.interceptors.request.use((config) => {
