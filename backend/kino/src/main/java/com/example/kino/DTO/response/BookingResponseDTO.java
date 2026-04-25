@@ -1,0 +1,32 @@
+package com.example.kino.DTO.response;
+
+import com.example.kino.entity.Booking;
+import com.example.kino.entity.SeatCoordinate;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class BookingResponseDTO {
+    private int bookingId;
+    private int screeningId;
+    private String username;
+    private List<SeatCoordinate> seats;
+    private LocalDateTime createdAt;
+
+    public BookingResponseDTO(Booking booking) {
+        this.bookingId = booking.getBookingId();
+        this.screeningId = booking.getScreening().getScreeningId();
+        this.username = booking.getUser().getUsername();
+        this.seats = booking.getSeats();
+        this.createdAt = booking.getCreatedAt();
+    }
+}
+
