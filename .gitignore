@@ -1,0 +1,28 @@
+# Root ignore rules (applies repo-wide)
+
+# Secrets / env files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+*.iml
+.vscode/
+
+# Node
+**/node_modules/
+**/dist/
+**/dist-ssr/
+**/*.local
+
+# Java / Maven / Gradle
+**/target/
+**/build/
+
