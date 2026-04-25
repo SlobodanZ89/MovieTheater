@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/h2/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.HEAD, "/api/posters/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/posters/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/**", "/screenings/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/bookings/**").permitAll()
