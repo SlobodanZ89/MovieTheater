@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     fetchMovies,
     fetchMoviesByVersion,
+    fetchMoviesByQuery,
     createMovie,
     assignMovieToHall,
     refreshPosters
@@ -49,17 +50,20 @@ const MovieListPage = () => {
     });
 
     const [filterVersion, setFilterVersion] = useState('');
+    const [query, setQuery] = useState('');
 
     const [hallInputs, setHallInputs] = useState({});
 
 
     useEffect(() => {
-        if (!filterVersion) {
-            dispatch(fetchMovies());
-        } else {
-            dispatch(fetchMoviesByVersion(filterVersion));
+        const q = query.trim();
+        if (q) {
+            dispatch(fetchMoviesByQuery({ query: q, version: filterVersion || undefined }));
+            return;
         }
-    }, [filterVersion, dispatch]);
+        if (!filterVersion) dispatch(fetchMovies());
+        else dispatch(fetchMoviesByVersion(filterVersion));
+    }, [filterVersion, query, dispatch]);
 
     const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
     const handleSelectChange = (value) => setForm({ ...form, movieVersion: value });
@@ -158,6 +162,15 @@ const MovieListPage = () => {
                     ))}
                 </Select>
             </FormControl>
+
+            <TextField
+                label="Search by title"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                fullWidth
+                sx={{ mb: 2 }}
+                placeholder="e.g. Dune"
+            />
 
             {isAdmin && (
                 <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>

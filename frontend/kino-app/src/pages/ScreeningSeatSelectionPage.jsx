@@ -123,33 +123,13 @@ export default function ScreeningSeatSelectionPage() {
                 variant="contained"
                 disabled={!seatMap || selected.length === 0 || saving}
                 onClick={async () => {
-                  if (!isAuthenticated) {
-                    notify('Please login to confirm booking.', 'warning');
-                    try {
-                      sessionStorage.setItem(
-                        PENDING_BOOKING_KEY,
-                        JSON.stringify({
-                          screeningId: Number(id),
-                          selectedSeats: selected,
-                          returnUrl: location.pathname + location.search,
-                          movieId: backMovieId,
-                          cinemaId: backCinemaId,
-                          from: backFrom,
-                        })
-                      );
-                    } catch {
-                      // ignore storage errors
-                    }
-                    navigate('/login', { state: { from: location } });
-                    return;
-                  }
                   setSaving(true);
                   try {
                     await http.post('/bookings', {
                       screeningId: Number(id),
                       seats: selected.map((s) => ({ rowIdx: s.row, colIdx: s.col })),
                     });
-                    notify('Booking confirmed.', 'success');
+                    notify(isAuthenticated ? 'Booking confirmed.' : 'Booking confirmed (guest).', 'success');
                     try {
                       sessionStorage.removeItem(PENDING_BOOKING_KEY);
                     } catch {

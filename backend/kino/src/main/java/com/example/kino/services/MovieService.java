@@ -98,6 +98,28 @@ public class MovieService {
         return filteredMovies;
     }
 
+    public List<MovieResponseDTO> searchByTitle(String query, MovieVersion version) {
+        if (query == null || query.isBlank()) {
+            return version != null ? getMovieVersion(version) : getAllMovies();
+        }
+
+        List<Movie> movies = movieRepository.findByTitleContainingIgnoreCase(query.trim());
+        List<MovieResponseDTO> out = new ArrayList<>();
+        for (Movie movie : movies) {
+            if (version != null && movie.getMovieVersion() != version) continue;
+
+            List<Movie_plays_in> moviePlaysInList = movie_plays_inRepository.findByMovie(movie);
+            List<HallResponseDTO> halls = new ArrayList<>();
+            for (Movie_plays_in movie_plays_in : moviePlaysInList) {
+                halls.add(new HallResponseDTO(movie_plays_in.getHall()));
+            }
+            MovieResponseDTO dto = new MovieResponseDTO(movie);
+            dto.setHalls(halls);
+            out.add(dto);
+        }
+        return out;
+    }
+
     public MovieResponseDTO setMovieToNewHall(int movieId, int hallId){
         Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException(movieId));
         Hall hall = hallRepository.findById(hallId).orElseThrow(() -> new HallNotFoundException(hallId));

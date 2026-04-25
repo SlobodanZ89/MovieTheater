@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addHallToCurrentCinema, fetchCinemaById } from '../features/cinemas/cinemaSlice';
 import { createHall } from '../features/halls/hallSlice';
@@ -26,6 +26,7 @@ const movieVersions = [
 
 const HallListPage = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const { notify } = React.useContext(ToastContext);
     const { current: cinema, status } = useSelector((state) => state.cinemas);
@@ -42,6 +43,7 @@ const HallListPage = () => {
     });
 
     const [createdHall, setCreatedHall] = useState(null);
+    const [openHallId, setOpenHallId] = useState('');
 
     useEffect(() => {
         if (id) {
@@ -110,8 +112,60 @@ const HallListPage = () => {
                     Login as admin to create or edit halls.
                 </Typography>
             ) : (
-                <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
-                    <Grid container spacing={2}>
+                <>
+                    <Grid container spacing={2} sx={{ mt: 1, mb: 2 }}>
+                        <Grid item xs={12} md={3}>
+                            <TextField
+                                label="Open hall by ID"
+                                value={openHallId}
+                                onChange={(e) => setOpenHallId(e.target.value)}
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={3} sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Button
+                                variant="outlined"
+                                onClick={() => {
+                                    const hid = Number(openHallId);
+                                    if (!hid) {
+                                        notify('Enter a hall ID.', 'warning');
+                                        return;
+                                    }
+                                    navigate(`/hall/${hid}`);
+                                }}
+                                sx={{ height: 56 }}
+                            >
+                                Open hall
+                            </Button>
+                        </Grid>
+                    </Grid>
+
+                    {Array.isArray(cinema?.hallList) && cinema.hallList.length > 0 ? (
+                        <Grid container spacing={2} sx={{ mb: 1 }}>
+                            {cinema.hallList.map((h) => (
+                                <Grid item xs={12} md={4} key={h.hallId}>
+                                    <Paper sx={{ p: 2 }}>
+                                        <Typography sx={{ fontWeight: 800 }}>
+                                            {h.name || `Hall #${h.hallId}`}
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            #{h.hallId} · {h.rows}×{h.cols} · {h.supportedMovieVersion}
+                                        </Typography>
+                                        <Button
+                                            variant="text"
+                                            onClick={() => navigate(`/hall/${h.hallId}`)}
+                                            sx={{ mt: 1 }}
+                                        >
+                                            Edit
+                                        </Button>
+                                    </Paper>
+                                </Grid>
+                            ))}
+                        </Grid>
+                    ) : null}
+
+                    <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
+                        <Grid container spacing={2}>
                         <Grid item xs={12} md={3}>
                             <TextField
                                 label="Cinema ID"
@@ -209,7 +263,8 @@ const HallListPage = () => {
                             </Button>
                         </Grid>
                     </Grid>
-                </form>
+                    </form>
+                </>
             )}
 
             {createdHall && (

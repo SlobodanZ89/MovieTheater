@@ -37,6 +37,14 @@ public class MovieController {
         return movieService.getMovieVersion(movieVersion);
     }
 
+    @GetMapping("/search")
+    public List<MovieResponseDTO> search(
+            @RequestParam(name = "query", required = false) String query,
+            @RequestParam(name = "version", required = false) MovieVersion version
+    ) {
+        return movieService.searchByTitle(query, version);
+    }
+
     @PostMapping("/{movieId}/hall/{hallId}")
     public MovieResponseDTO setMovieToNewHall(@PathVariable int movieId, @PathVariable int hallId) {
         return movieService.setMovieToNewHall(movieId, hallId);

@@ -17,7 +17,8 @@ public class BookingController {
 
     @PostMapping
     public BookingResponseDTO create(@RequestBody BookingRequestDTO request, Principal principal) {
-        return bookingService.createBooking(principal.getName(), request);
+        String username = (principal != null ? principal.getName() : null);
+        return bookingService.createBooking(username, request);
     }
 }
 

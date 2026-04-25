@@ -19,6 +19,18 @@ export const fetchMoviesByVersion = createAsyncThunk(
     }
 );
 
+export const fetchMoviesByQuery = createAsyncThunk(
+    'movies/fetchMoviesByQuery',
+    async ({ query, version } = {}) => {
+        const params = new URLSearchParams();
+        if (query) params.set('query', query);
+        if (version) params.set('version', version);
+        const qs = params.toString();
+        const response = await http.get(`${BASE_URL}/search${qs ? `?${qs}` : ''}`);
+        return response.data;
+    }
+);
+
 
 export const createMovie = createAsyncThunk(
     'movies/createMovie',
@@ -76,6 +88,18 @@ const movieSlice = createSlice({
                 state.list = action.payload;
             })
             .addCase(fetchMoviesByVersion.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
+
+            .addCase(fetchMoviesByQuery.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(fetchMoviesByQuery.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.list = action.payload;
+            })
+            .addCase(fetchMoviesByQuery.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.error.message;
             })

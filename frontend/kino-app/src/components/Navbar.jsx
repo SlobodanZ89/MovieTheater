@@ -50,21 +50,36 @@ const Navbar = () => {
                             Cinemas
                         </Button>
                         {isAdmin && (
-                            <Button color="inherit" component={Link} to="/hall">
-                                Halls
+                            <Button color="inherit" component={Link} to="/admin/cinemas">
+                                Admin · Cinemas
                             </Button>
                         )}
                         {isAdmin && (
-                            <Button color="inherit" component={Link} to="/admin/cinemas">
-                                Admin
+                            <Button color="inherit" component={Link} to="/admin/movies">
+                                Admin · Movies
+                            </Button>
+                        )}
+                        {isAdmin && (
+                            <Button color="inherit" component={Link} to="/admin/halls">
+                                Admin · Halls
+                            </Button>
+                        )}
+                        {isAdmin && (
+                            <Button color="inherit" component={Link} to="/admin/screenings">
+                                Admin · Screenings
                             </Button>
                         )}
                     </Box>
 
                     {!isAuthenticated ? (
-                        <Button color="inherit" component={Link} to="/login" sx={{ ml: 1 }}>
-                            Login
-                        </Button>
+                        <>
+                            <Button color="inherit" component={Link} to="/login" sx={{ ml: 1 }}>
+                                Login
+                            </Button>
+                            <Button color="inherit" component={Link} to="/register" sx={{ ml: 1 }}>
+                                Register
+                            </Button>
+                        </>
                     ) : (
                         <Button
                             color="inherit"
@@ -97,23 +112,42 @@ const Navbar = () => {
                     </ListItem>
                     {isAdmin && (
                         <ListItem disablePadding>
-                            <ListItemButton component={Link} to="/hall" onClick={handleDrawerToggle}>
-                                <ListItemText primary="Halls" />
+                            <ListItemButton component={Link} to="/admin/cinemas" onClick={handleDrawerToggle}>
+                                <ListItemText primary="Admin · Cinemas" />
                             </ListItemButton>
                         </ListItem>
                     )}
                     {isAdmin && (
                         <ListItem disablePadding>
-                            <ListItemButton component={Link} to="/admin/cinemas" onClick={handleDrawerToggle}>
-                                <ListItemText primary="Admin" />
+                            <ListItemButton component={Link} to="/admin/movies" onClick={handleDrawerToggle}>
+                                <ListItemText primary="Admin · Movies" />
+                            </ListItemButton>
+                        </ListItem>
+                    )}
+                    {isAdmin && (
+                        <ListItem disablePadding>
+                            <ListItemButton component={Link} to="/admin/halls" onClick={handleDrawerToggle}>
+                                <ListItemText primary="Admin · Halls" />
+                            </ListItemButton>
+                        </ListItem>
+                    )}
+                    {isAdmin && (
+                        <ListItem disablePadding>
+                            <ListItemButton component={Link} to="/admin/screenings" onClick={handleDrawerToggle}>
+                                <ListItemText primary="Admin · Screenings" />
                             </ListItemButton>
                         </ListItem>
                     )}
                     {!isAuthenticated ? (
                         <ListItem disablePadding>
-                            <ListItemButton component={Link} to="/login" onClick={handleDrawerToggle}>
-                                <ListItemText primary="Login" />
-                            </ListItemButton>
+                            <Box sx={{ width: '100%' }}>
+                                <ListItemButton component={Link} to="/login" onClick={handleDrawerToggle}>
+                                    <ListItemText primary="Login" />
+                                </ListItemButton>
+                                <ListItemButton component={Link} to="/register" onClick={handleDrawerToggle}>
+                                    <ListItemText primary="Register" />
+                                </ListItemButton>
+                            </Box>
                         </ListItem>
                     ) : (
                         <ListItem disablePadding>

@@ -3,11 +3,13 @@ package com.example.kino.services;
 import com.example.kino.DTO.request.BookingRequestDTO;
 import com.example.kino.DTO.response.BookingResponseDTO;
 import com.example.kino.entity.*;
+import com.example.kino.enums.Role;
 import com.example.kino.repositories.AppUserRepository;
 import com.example.kino.repositories.BookingRepository;
 import com.example.kino.repositories.ScreeningRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,10 +23,10 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final ScreeningRepository screeningRepository;
     private final AppUserRepository appUserRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public BookingResponseDTO createBooking(String username, BookingRequestDTO request) {
-        AppUser user = appUserRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+        AppUser user = resolveBookingUser(username);
 
         Screening screening = screeningRepository.findById(request.getScreeningId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Screening not found"));
@@ -81,6 +83,22 @@ public class BookingService {
         screeningRepository.save(screening);
 
         return new BookingResponseDTO(booking);
+    }
+
+    private AppUser resolveBookingUser(String username) {
+        if (username != null && !username.isBlank()) {
+            return appUserRepository.findByUsername(username)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+        }
+
+        return appUserRepository.findByUsername("guest")
+                .orElseGet(() -> {
+                    AppUser guest = new AppUser();
+                    guest.setUsername("guest");
+                    guest.setPasswordHash(passwordEncoder.encode(UUID.randomUUID().toString()));
+                    guest.setRole(Role.ROLE_USER);
+                    return appUserRepository.save(guest);
+                });
     }
 }
 
